@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.dao.BoardDao">
+
+    <select id="selectList" resultType="Board">
+        SELECT
+            board_seq
+            ,writer
+            ,title
+            ,contents
+            ,createDate
+        FROM board
+    </select>
+
+    <insert id="insert">
+        INSERT INTO board (
+            writer
+            ,title
+            ,contents
+        )
+        VALUES (
+            #{writer}
+            ,#{title}
+            ,#{contents}
+        )
+    </insert>
+
+    <delete id="delete" parameterType="Board">
+        DELETE
+        FROM board
+        WHERE board_seq = #{board_seq}
+    </delete>
+
+    <select id="selectOne" resultType="Board">
+        SELECT
+             board_seq
+            ,writer
+            ,title
+            ,contents
+            ,createDate
+        FROM board
+        WHERE board_seq =#{board_seq}
+
+    </select>
+
+    <update id="update" parameterType="Board">
+        UPDATE board
+        SET
+            writer = #{writer}
+            ,title = #{title}
+            ,contents = #{contents}
+        WHERE board_seq =#{board_seq}
+    </update>
+
+</mapper>
