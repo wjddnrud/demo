@@ -4,40 +4,50 @@ import java.time.LocalDateTime;
 
 public class Board {
 
-    private Integer board_seq;
-    private String writer;
-    private String contents;
-    private LocalDateTime createDate;
+    private Integer bdSeq;
+    private String bdWriter;
+    private String bdTitle;
+    private String bdContents;
+    private String bdCreateDate;
 
-    public Integer getBoard_seq() {
-        return board_seq;
+
+    public Integer getBdSeq() {
+        return bdSeq;
     }
 
-    public void setBoard_seq(Integer board_seq) {
-        this.board_seq = board_seq;
+    public void setBdSeq(Integer bdSeq) {
+        this.bdSeq = bdSeq;
     }
 
-    public String getWriter() {
-        return writer;
+    public String getBdWriter() {
+        return bdWriter;
     }
 
-    public void setWriter(String writer) {
-        this.writer = writer;
+    public void setBdWriter(String bdWriter) {
+        this.bdWriter = bdWriter;
     }
 
-    public String getContents() {
-        return contents;
+    public String getBdTitle() {
+        return bdTitle;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
+    public void setBdTitle(String bdTitle) {
+        this.bdTitle = bdTitle;
     }
 
-    public LocalDateTime getCreateDate() {
-        return createDate;
+    public String getBdContents() {
+        return bdContents;
     }
 
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
+    public void setBdContents(String bdContents) {
+        this.bdContents = bdContents;
+    }
+
+    public String getBdCreateDate() {
+        return bdCreateDate;
+    }
+
+    public void setBdCreateDate(String bdCreateDate) {
+        this.bdCreateDate = bdCreateDate;
     }
 }

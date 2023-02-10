@@ -6,52 +6,76 @@
 
     <select id="selectList" resultType="Board">
         SELECT
-            board_seq
-            ,writer
-            ,title
-            ,contents
-            ,createDate
+            bdSeq
+            ,bdWriter
+            ,bdTitle
+            ,bdContents
+            ,bdCreateDate
         FROM board
     </select>
 
     <insert id="insert">
         INSERT INTO board (
-            writer
-            ,title
-            ,contents
+            bdWriter
+            ,bdTitle
+            ,bdContents
         )
         VALUES (
-            #{writer}
-            ,#{title}
-            ,#{contents}
+            #{bdWriter}
+            ,#{bdTitle}
+            ,#{bdContents}
         )
+        <selectKey keyProperty="bdSeq" resultType="Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
 
     <delete id="delete" parameterType="Board">
         DELETE
         FROM board
-        WHERE board_seq = #{board_seq}
+        WHERE bdSeq = #{bdSeq}
     </delete>
 
-    <select id="selectOne" resultType="Board">
+    <select id="selectOne" resultType="Board" parameterType="Board">
         SELECT
-             board_seq
-            ,writer
-            ,title
-            ,contents
-            ,createDate
+            bdSeq
+            ,bdWriter
+            ,bdTitle
+            ,bdContents
+            ,bdCreateDate
         FROM board
-        WHERE board_seq =#{board_seq}
+        WHERE bdSeq = #{bdSeq}
 
     </select>
 
     <update id="update" parameterType="Board">
         UPDATE board
         SET
-            writer = #{writer}
-            ,title = #{title}
-            ,contents = #{contents}
-        WHERE board_seq =#{board_seq}
+            bdWriter = #{bdWriter}
+            ,bdTitle = #{bdTitle}
+            ,bdContents = #{bdContents}
+        WHERE bdSeq = #{bdSeq}
     </update>
 
+    <select id="selectOneForTitle" resultType="Board">
+        SELECT
+            bdSeq
+            ,bdWriter
+            ,bdTitle
+            ,bdContents
+            ,bdCreateDate
+        FROM board
+        WHERE 1=1
+            <choose>
+<!--                <when test="#{bdTitle} != null">-->
+<!--                    AND bdTitle LIKE CONCAT ('%', #{bdTitle}, '%')-->
+<!--                </when>-->
+                <when test="#{month} != null">
+                    AND bdCreateDate BETWEEN '2023-'#{month}'-01' AND '2023-'#{month}'-31'
+                </when>
+            </choose>
+    </select>
+
 </mapper>
+
+
