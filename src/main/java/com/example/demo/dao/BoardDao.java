@@ -2,25 +2,18 @@ package com.example.demo.dao;
 
 import com.example.demo.dto.Board;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
 public interface BoardDao {
 
-    List<Board> selectList();
+    List<Board> boardList();
 
-    void insert(Board dto);
+    int boardInsert(Board dto);
 
-    void delete(Integer bdSeq);
+    void boardDelete(Board dto);
 
-    Board selectOne(Integer bdSeq);
+    void boardUpdate(Board dto);
 
-    void update(Board dto);
-
-    List<Board> selectOneForTitle(String bdTitle, String month);
-
-
-
+    Board boardSelectOne(Board dto);
 }

@@ -1,7 +1,5 @@
 package com.example.demo.dto;
 
-import java.time.LocalDateTime;
-
 public class Board {
 
     private Integer bdSeq;
@@ -9,7 +7,6 @@ public class Board {
     private String bdTitle;
     private String bdContents;
     private String bdCreateDate;
-
 
     public Integer getBdSeq() {
         return bdSeq;

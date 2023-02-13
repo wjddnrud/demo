@@ -2,92 +2,103 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.Board;
 import com.example.demo.service.BoardService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.lang.model.type.UnionType;
+import java.net.HttpURLConnection;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-//각 함수별로 @ResponseBody를 사용해주던것을 @RestController 하나로 전체가 같은 기능을 함
 @RequestMapping("/boards")
-//여러 게시물들의 집합(Collection)이므로 복수형으로 boards 사용
-//@RequestMapping(value="")
-//@RequestMapping
-// 두가지 형태로 사용되지만 동작은 같다.
-
+@RequiredArgsConstructor
 public class BoardController {
 
-    @Autowired
-    BoardService service;
 
-    @GetMapping
+    private final BoardService service;
+
+    @GetMapping("")
     public List<Board> boardList() {
-
-        List<Board> boardList = service.boardList();
-
-        return boardList;
-
+        return service.boardList();
     }
 
-    @PostMapping
-//    http 메서드 중 하나인 POST 메서드를 사용하기 때문에 /insert or /write 같은 의미를 추가하지 않아야한다.
-    public String boardInst(@RequestBody Board dto) {
+//    @PostMapping("")
+//    public ResponseEntity boardInsert(@RequestBody Board dto) {
+////        인서트 에러 발생시 예외 처리 ...?
+//        service.boardInsert(dto);
+//        return new ResponseEntity("게시물이 등록되었습니다.", HttpStatus.OK);
+//    }
 
-        service.insert(dto);
-
-        return dto.getBdSeq() + "번째 게시물 등록되었습니다.";
+    @PostMapping("")
+    public Board boardInserts(@RequestBody Board dto) {
+        dto.setBdCreateDate(String.valueOf(LocalDate.now()));
+        service.boardInsert(dto);
+        return dto;
     }
+
+//    @PostMapping("")
+//    public ResponseEntity boardInserts(@RequestBody Board dto) {
+//        Map<String, Object> result = new HashMap<>();
+//        int InsertResult = service.boardInsert(dto);
+//        System.out.println("insert : " + InsertResult);
+//        result.put("contents", dto.getBdContents());
+//        result.put("title", dto.getBdTitle());
+//        result.put("writer", dto.getBdWriter());
+//
+////        if(InsertResult != null) {
+////            return new ResponseEntity(result + "<br>게시물이 성공적으로 등록되었습니다.</br>", HttpStatus.OK);
+////        } else {
+////            return new ResponseEntity(result + "<br>게시물이 등록에 문제가 발생하였습니다.</br>", HttpStatus.);
+////        }
+//        return new ResponseEntity(result + "<br>게시물이 성공적으로 등록되었습니다.</br>", HttpStatus.OK);
+//    }
 
     @DeleteMapping("/{bdSeq}")
-    public String boardDel(@PathVariable Integer bdSeq) {
-
-        service.delete(bdSeq);
-
+    public String boardDelete(@RequestBody Board dto) {
+        Board one = service.boardSelectOne(dto);
+        service.boardDelete(dto);
         return "게시물이 삭제되었습니다.";
     }
 
-    @GetMapping("/{bdSeq}")
-//    복수형태의 Collection인 boards 다음으로 몇 번 게시물인지 표현하는 Document로 board_seq 사용
-//    rest api uri부분에 실제 값을 입력해서 요청을 보내려면 위와같이 {}를 사용하여 안에 입력해줄 값의 객체명을 넣어준다.
-//    아래에 보면 @RequestBody로 된 Board dto 파라미터로 Board안의 객체들과 맵핑 되겠지만
-//    가독성과 정확한 명시를 위해 @PathVariable 어노테이션을 사용해주면 좋다.
-    public Board boardView(@PathVariable("bdSeq") Integer seq) {
-
-        System.out.println(seq);
-
-        return service.selectOne(seq);
+    @PutMapping("")
+    public String boardUpdate(@RequestBody Board dto) {
+        service.boardUpdate(dto);
+        return "success";
     }
 
-    @PutMapping
-    public String boardUpdt(@RequestBody Board dto) {
-
-        service.update(dto);
-
-//        다시 그 seq를 가지고 업데이트된 정보 불러와서 return에 보여주기
-
-        return dto.getBdSeq() + "번째 게시물의 전체 리소스(PUT)가 수정되었습니다.";
-    }
-
-
-//    @GetMapping("/title/{bdTitle}")
-//    public List<Board> selectOneFor(@PathVariable("bdTitle") String title) {
-//
-//        System.out.println(title);
-//
-//        return service.selectOneForTitle(title);
+//    @GetMapping("/{bdSeq}")
+//    public Board boardSelectOne(@PathVariable("bdSeq") Integer seq) {
+//        Board boardOne = service.boardSelectOne(seq);
+//        System.out.println("boardSelectOne : " + boardOne);
+//        return service.boardSelectOne(seq);
 //    }
 
-    @GetMapping("/title/{bdTitle}/createMonth/{month}")
-    public List<Board> selectOneFor(@PathVariable("bdTitle") String title, @PathVariable("month") String month) {
-
-        System.out.println(title);
-        System.out.println(month);
-
-        return service.selectOneForTitle(title, month);
+    @GetMapping("/{bdSeq}")
+    public ResponseEntity boardSelectOne(@RequestBody Board dto) {
+        Board one = service.boardSelectOne(dto);
+        if(one == null) {
+            return new ResponseEntity("해당 게시물은 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(one, HttpStatus.OK);
     }
 
-
-
-
+//    @RequestMapping("/{bdSeq}")
+//    @ResponseBody
+//    public Map<String, Object> board(@PathVariable Integer bdSeq) {
+//
+//        Map<String, Object> result = new HashMap<>();
+//        Board one = service.boardSelectOne(bdSeq);
+//        result.put("writer", one.getBdWriter());
+//        result.put("title", one.getBdTitle());
+//        result.put("contents", one.getBdContents());
+//        result.put("createDate", one.getBdCreateDate());
+//
+//        return result;
+//    }
 }
