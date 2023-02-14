@@ -1,50 +1,21 @@
 package com.example.demo.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+
+@Getter
+@Setter
 public class Board {
 
-    private Integer bdSeq;
-    private String bdWriter;
-    private String bdTitle;
-    private String bdContents;
-    private String bdCreateDate;
-
-    public Integer getBdSeq() {
-        return bdSeq;
-    }
-
-    public void setBdSeq(Integer bdSeq) {
-        this.bdSeq = bdSeq;
-    }
-
-    public String getBdWriter() {
-        return bdWriter;
-    }
-
-    public void setBdWriter(String bdWriter) {
-        this.bdWriter = bdWriter;
-    }
-
-    public String getBdTitle() {
-        return bdTitle;
-    }
-
-    public void setBdTitle(String bdTitle) {
-        this.bdTitle = bdTitle;
-    }
-
-    public String getBdContents() {
-        return bdContents;
-    }
-
-    public void setBdContents(String bdContents) {
-        this.bdContents = bdContents;
-    }
-
-    public String getBdCreateDate() {
-        return bdCreateDate;
-    }
-
-    public void setBdCreateDate(String bdCreateDate) {
-        this.bdCreateDate = bdCreateDate;
-    }
+    private Integer boardSeq;
+    @NotBlank(message = "제목 값이 비어있습니다.")
+    private String writer;
+    @NotBlank(message = "")
+    private String title;
+    @NotBlank(message = "")
+    private String contents;
+    @NotBlank(message = "")
+    private String createDate;
 }

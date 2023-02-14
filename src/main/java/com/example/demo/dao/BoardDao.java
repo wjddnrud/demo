@@ -7,13 +7,13 @@ import java.util.List;
 @Mapper
 public interface BoardDao {
 
-    List<Board> boardList();
+    List<Board> selectBoardList();
 
-    int boardInsert(Board dto);
+    int insertBoard(Board dto);
 
-    void boardDelete(Board dto);
+    int deleteBoard(Integer boardSeq);
 
-    void boardUpdate(Board dto);
+    int updateBoard(Board dto, Integer boardSeq);
 
-    Board boardSelectOne(Board dto);
+    Board selectOneBoard(Integer boardSeq);
 }

@@ -12,23 +12,23 @@ public class BoardService {
 
     private final BoardDao dao;
 
-    public List<Board> boardList() {
-        return dao.boardList();
+    public List<Board> selectBoardList() {
+        return dao.selectBoardList();
     }
 
-    public int boardInsert(Board dto) {
-        return dao.boardInsert(dto);
+    public int insertBoard(Board dto) {
+        return dao.insertBoard(dto);
     }
 
-    public void boardDelete(Board dto) {
-        dao.boardDelete(dto);
+    public int deleteBoard(Integer boardSeq) {
+        return dao.deleteBoard(boardSeq);
     }
 
-    public void boardUpdate(Board dto) {
-        dao.boardUpdate(dto);
+    public int updateBoard(Board dto, Integer boardSeq) {
+        return dao.updateBoard(dto, boardSeq);
     }
 
-    public Board boardSelectOne(Board dto) {
-        return dao.boardSelectOne(dto);
+    public Board selectOneBoard(Integer boardSeq) {
+        return dao.selectOneBoard(boardSeq);
     }
 }

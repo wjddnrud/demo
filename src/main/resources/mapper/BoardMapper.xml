@@ -4,51 +4,51 @@
 
 <mapper namespace="com.example.demo.dao.BoardDao">
 
-    <select id="boardList" resultType="Board">
-        SELECT bdSeq
-             , bdWriter
-             , bdTitle
-             , bdContents
-             , bdCreateDate
+    <select id="selectBoardList" resultType="Board">
+        SELECT boardSeq
+             , writer
+             , title
+             , contents
+             , createDate
           FROM board
     </select>
 
-    <insert id="boardInsert">
-        INSERT INTO board ( bdWriter
-                          , bdTitle
-                          , bdContents
+    <insert id="insertBoard" parameterType="Board">
+        INSERT INTO board ( writer
+                          , title
+                          , contents
                           )
-                   VALUES ( #{bdWriter}
-                          , #{bdTitle}
-                          , #{bdContents}
+                   VALUES ( #{writer}
+                          , #{title}
+                          , #{contents}
                           )
-        <selectKey keyProperty="bdSeq" resultType="Integer" order="AFTER">
+        <selectKey keyProperty="boardSeq" resultType="Integer" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
 
-    <delete id="boardDelete" parameterType="Board">
+    <delete id="deleteBoard" parameterType="Integer">
         DELETE
           FROM board
-         WHERE bdSeq = #{bdSeq}
+         WHERE boardSeq = #{boardSeq}
     </delete>
 
-    <update id="boardUpdate" parameterType="Board">
+    <update id="updateBoard" parameterType="Board">
         UPDATE board
-           SET bdWriter = #{bdWriter}
-             , bdTitle = #{bdTitle}
-             , bdContents = #{bdContents}
-         WHERE bdSeq = #{bdSeq}
+           SET writer = #{writer}
+             , title = #{title}
+             , contents = #{contents}
+         WHERE boardSeq = #{boardSeq}
     </update>
 
-    <select id="boardSelectOne" resultType="Board" parameterType="Board">
-        SELECT bdSeq
-             , bdWriter
-             , bdTitle
-             , bdContents
-             , bdCreateDate
+    <select id="selectOneBoard" resultType="Board" parameterType="Board">
+        SELECT boardSeq
+             , writer
+             , title
+             , contents
+             , createDate
           FROM board
-         WHERE bdSeq = #{bdSeq}
+         WHERE boardSeq = #{boardSeq}
     </select>
 </mapper>
 
