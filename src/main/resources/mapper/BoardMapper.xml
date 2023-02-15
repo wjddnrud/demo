@@ -4,7 +4,7 @@
 
 <mapper namespace="com.example.demo.dao.BoardDao">
 
-    <select id="selectBoardList" resultType="Board">
+    <select id="selectBoardAll" resultType="Board">
         SELECT boardSeq
              , writer
              , title
@@ -35,13 +35,12 @@
 
     <update id="updateBoard" parameterType="Board">
         UPDATE board
-           SET writer = #{writer}
-             , title = #{title}
-             , contents = #{contents}
+           SET title = #{dto.title}
+             , contents = #{dto.contents}
          WHERE boardSeq = #{boardSeq}
     </update>
 
-    <select id="selectOneBoard" resultType="Board" parameterType="Board">
+    <select id="selectBoardByBoardSeq" resultType="Board" parameterType="Board">
         SELECT boardSeq
              , writer
              , title
@@ -49,6 +48,16 @@
              , createDate
           FROM board
          WHERE boardSeq = #{boardSeq}
+    </select>
+
+    <select id="selectBoardByTitle" resultType="Board" parameterType="Board">
+        SELECT boardSeq
+             , writer
+             , title
+             , contents
+             , createDate
+          FROM board
+         WHERE title LIKE CONCAT ('%', '#{title}', '%')
     </select>
 </mapper>
 

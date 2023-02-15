@@ -7,7 +7,7 @@ import java.util.List;
 @Mapper
 public interface BoardDao {
 
-    List<Board> selectBoardList();
+    List<Board> selectBoardAll();
 
     int insertBoard(Board dto);
 
@@ -15,5 +15,7 @@ public interface BoardDao {
 
     int updateBoard(Board dto, Integer boardSeq);
 
-    Board selectOneBoard(Integer boardSeq);
+    Board selectBoardByBoardSeq(Integer boardSeq);
+
+    List<Board> selectBoardByTitle(Board dto);
 }

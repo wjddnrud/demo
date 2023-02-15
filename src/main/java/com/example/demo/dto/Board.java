@@ -2,6 +2,7 @@ package com.example.demo.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.ObjectUtils;
 
 import javax.validation.constraints.NotBlank;
 
@@ -10,12 +11,8 @@ import javax.validation.constraints.NotBlank;
 public class Board {
 
     private Integer boardSeq;
-    @NotBlank(message = "제목 값이 비어있습니다.")
     private String writer;
-    @NotBlank(message = "")
     private String title;
-    @NotBlank(message = "")
     private String contents;
-    @NotBlank(message = "")
     private String createDate;
 }
