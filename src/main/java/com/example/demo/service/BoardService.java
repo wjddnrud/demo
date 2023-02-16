@@ -2,8 +2,9 @@ package com.example.demo.service;
 
 import com.example.demo.dao.BoardDao;
 import com.example.demo.dto.Board;
+import com.example.demo.dto.Paging;
+import com.example.demo.vo.Vo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -17,44 +18,50 @@ public class BoardService {
 
     private final BoardDao dao;
 
-    public ResponseEntity<?> selectBoardAll() {
-        List<Board> boardlist = dao.selectBoardAll();
-        if(boardlist.isEmpty()) {
-            return new ResponseEntity<String>("게시물이 없습니다.", HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity(boardlist, HttpStatus.OK);
+    public ResponseEntity<List<Board>> selectBoardListByThisPage(int thisPage, Paging paging) {
+        paging.setParamsPaging(dao.boardCount(), thisPage);
+        List<Board> selectBoardListByThisPage = dao.selectBoardListByThisPage(paging);
+        return ResponseEntity.ok().body(selectBoardListByThisPage);
     }
 
-    public ResponseEntity<?> selectBoardByBoardSeq(Integer boardSeq) {
+    public ResponseEntity<List<Board>> selectBoardAll() {
+        List<Board> boardList = dao.selectBoardAll();
+        if(boardList.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(boardList);
+    }
+
+    public ResponseEntity<Board> selectBoardByBoardSeq(Integer boardSeq) {
         Board board = dao.selectBoardByBoardSeq(boardSeq);
         if(board != null) {
-            return new ResponseEntity<Board>(board, HttpStatus.OK);
+            return ResponseEntity.ok().body(board);
         }
-        return new ResponseEntity<String>("존재하지 않는 게시물입니다.", HttpStatus.NOT_FOUND);
+        return ResponseEntity.notFound().build();
     }
 
-    public ResponseEntity<?> insertBoard(Board dto) {
+    public ResponseEntity<Board> insertBoard(Board dto) {
         dto.setCreateDate(String.valueOf(LocalDateTime.now()));
         int insertCheck = dao.insertBoard(dto);
         if(insertCheck != 0) {
-            return new ResponseEntity<Board>(dto, HttpStatus.OK);
+            return ResponseEntity.ok().body(dto);
         }
-        return new ResponseEntity<String>("게시물 등록에 실패했습니다.", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().build();
     }
 
-    public ResponseEntity<?> deleteBoard(Integer boardSeq) {
+    public ResponseEntity<Board> deleteBoard(Integer boardSeq) {
         Board deletedData = dao.selectBoardByBoardSeq(boardSeq);
         int deleteCheck = dao.deleteBoard(boardSeq);
         if(deleteCheck != 0) {
-            return new ResponseEntity<Board>(deletedData, HttpStatus.OK);
+            return ResponseEntity.ok().body(deletedData);
         }
-        return new ResponseEntity<String>("존재하지 않는 게시물입니다.", HttpStatus.NOT_FOUND);
+        return ResponseEntity.notFound().build();
     }
 
-    public ResponseEntity<?> updateBoard(Board dto, Integer boardSeq) {
+    public ResponseEntity<Board> updateBoard(Board dto, Integer boardSeq) {
         Board board = dao.selectBoardByBoardSeq(boardSeq);
         if(board == null) {
-            return new ResponseEntity<String>("해당 게시물이 없습니다.", HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
         if(ObjectUtils.isEmpty(dto.getTitle())) {
             dto.setTitle(board.getTitle());
@@ -65,16 +72,31 @@ public class BoardService {
         int updateCheck = dao.updateBoard(dto, boardSeq);
         Board updatedData = dao.selectBoardByBoardSeq(boardSeq);
         if(updateCheck != 0) {
-            return new ResponseEntity<Board>(updatedData, HttpStatus.OK);
+            return ResponseEntity.ok().body(updatedData);
         }
-        return new ResponseEntity<String>("게시물 수정에 문제가 발생했습니다.", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().build();
     }
 
-    public ResponseEntity selectBoardByTitle(Board dto) {
-        System.out.println(dto.getTitle());
+//    public ResponseEntity<List<Board>> selectBoardByTitle(Board dto) {
+//        List<Board> selectBoardByTitle = dao.selectBoardByTitle(dto);
+//        return ResponseEntity.ok().body(selectBoardByTitle);
+//    }
+//
+//    public ResponseEntity<List<Board>> selectBoardByContents(Board dto) {
+//        List<Board> selectBoardByContents = dao.selectBoardByContents(dto);
+//        return ResponseEntity.ok().body(selectBoardByContents);
+//    }
 
-        List<Board> selectBoardByTitle = dao.selectBoardByTitle(dto);
-
-        return new ResponseEntity(selectBoardByTitle, HttpStatus.OK);
+    public ResponseEntity<List<Board>> selectBoardByCategory(Board dto) {
+        List<Board> selectBoardByCategory = dao.selectBoardByCategory(dto);
+        return ResponseEntity.ok().body(selectBoardByCategory);
     }
+
+    public ResponseEntity<List<Board>> selectBoardByCreateDate(Vo vo) {
+        System.out.println("시작일 : " + vo.getSearchEndDate());
+        System.out.println("종료일 : " + vo.getSearchEndDate());
+        List<Board> selectBoardByCreateDate = dao.selectBoardByCreateDate(vo);
+        return ResponseEntity.ok().body(selectBoardByCreateDate);
+    }
+
 }
