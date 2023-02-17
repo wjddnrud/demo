@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.example.demo.dao.BoardDao">
-
-    <select id="boardCount" resultType="Integer">
-        SELECT COUNT(*)
-          FROM board
-    </select>
-
-    <select id="selectBoardListByThisPage" parameterType="com.example.demo.dto.Paging" resultType="Board">
+    <select id="selectBoardList" resultType="Board" parameterType="Paging">
         SELECT boardSeq
              , writer
              , title
@@ -20,13 +13,26 @@
         OFFSET #{startRowNumToShow}
     </select>
 
-    <select id="selectBoardAll" resultType="Board">
+    <select id="searchBoardByTitle" resultType="Board" parameterType="Board">
         SELECT boardSeq
              , writer
              , title
              , contents
              , createDate
           FROM board
+         WHERE title  LIKE CONCAT ('%', #{dto.title}, '%')
+               <if test="paging.totalRows != null">LIMIT #{paging.boardNumToShow}</if>
+               <if test="paging.totalRows != null">OFFSET #{paging.startRowNumToShow}</if>
+    </select>
+
+    <select id="selectOneBoardByBoardSeq" resultType="Board" parameterType="Integer">
+        SELECT boardSeq
+             , writer
+             , title
+             , contents
+             , createDate
+          FROM board
+         WHERE boardSeq = #{boardSeq}
     </select>
 
     <insert id="insertBoard" parameterType="Board">
@@ -56,68 +62,10 @@
          WHERE boardSeq = #{boardSeq}
     </update>
 
-    <select id="selectBoardByBoardSeq" resultType="Board" parameterType="Board">
-        SELECT boardSeq
-             , writer
-             , title
-             , contents
-             , createDate
-          FROM board
-         WHERE boardSeq = #{boardSeq}
-    </select>
-
-<!--    <select id="selectBoardByTitle" resultType="Board" parameterType="Board">-->
-<!--        SELECT boardSeq-->
-<!--             , writer-->
-<!--             , title-->
-<!--             , contents-->
-<!--             , createDate-->
-<!--          FROM board-->
-<!--         WHERE title LIKE CONCAT ('%', #{title}, '%')-->
-<!--    </select>-->
-
-<!--    <select id="selectBoardByContents" resultType="Board" parameterType="Board">-->
-<!--        SELECT boardSeq-->
-<!--             , writer-->
-<!--             , title-->
-<!--             , contents-->
-<!--             , createDate-->
-<!--          FROM board-->
-<!--         WHERE contents LIKE CONCAT ('%', #{contents}, '%')-->
-<!--    </select>-->
-
-<!--    <select id="selectBoardByWriter" resultType="Board" parameterType="Board">-->
-<!--        SELECT boardSeq-->
-<!--             , writer-->
-<!--             , title-->
-<!--             , contents-->
-<!--             , createDate-->
-<!--          FROM board-->
-<!--         WHERE contents LIKE CONCAT ('%', #{writer}, '%')-->
-<!--    </select>-->
-
-    <select id="selectBoardByCategory" resultType="Board" parameterType="Board">
-        SELECT boardSeq
-             , writer
-             , title
-             , contents
-             , createDate
+    <select id="boardCount" resultType="Integer" parameterType="Board">
+        SELECT COUNT(*)
           FROM board
          WHERE 1=1
-               <if test="writer != null">AND writer LIKE CONCAT ('%', #{writer}, '%')</if>
                <if test="title != null">AND title  LIKE CONCAT ('%', #{title}, '%')</if>
-               <if test="contents != null">AND contents LIKE CONCAT ('%', #{contents}, '%')</if>
-    </select>
-
-    <select id="selectBoardByCreateDate" resultType="Board" parameterType="com.example.demo.vo.Vo">
-        SELECT boardSeq
-             , writer
-             , title
-             , contents
-             , createDate
-          FROM board
-         WHERE createDate BETWEEN #{searchStartDate}'00:00:00' AND #{searchEndDate}'23:59:59'
     </select>
 </mapper>
-
-
