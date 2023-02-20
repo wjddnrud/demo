@@ -7,12 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -20,35 +17,29 @@ public class BoardService {
 
     private final BoardDao dao;
 
-    public void setParamPaging(Board dto, Paging paging) {
-        paging.setParamsPaging(dao.boardCount(dto));
+    public void setParamPaging(Board boardDto, Paging pagingDto) {
+        pagingDto.setParamsPaging(dao.boardCount(boardDto));
     }
 
-    public ResponseEntity<?> selectBoardList(Board dto, Paging paging) {
-        setParamPaging(dto, paging);
-        List<Board> selectBoardList = dao.selectBoardList(paging);
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("페이징 관련 정보", paging);
-        resultMap.put("조회된 게시글 리스트", selectBoardList);
+    public ResponseEntity<?> selectBoardList(Board boardDto, Paging pagingDto) {
+        setParamPaging(boardDto, pagingDto);
+        List<Board> selectBoardList = dao.selectBoardList(pagingDto);
+        Map<String, Object> result = new HashMap<>();
+        result.put("페이징 정보", pagingDto);
+        result.put("조회된 게시물", selectBoardList);
         if (selectBoardList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body("게시물이 없습니다.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    public ResponseEntity<?> searchBoardByTitle(Board dto, Paging paging) {
-        if(dto.getTitle() == null) {
-            return ResponseEntity.status(HttpStatus.OK).body("검색할 글 제목을 입력해주세요.");
-        }
-        setParamPaging(dto, paging);
-        List<Board> searchBoardByTitle = dao.searchBoardByTitle(dto, paging);
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("페이징 관련 정보", paging);
-        resultMap.put("조회된 게시글 리스트", searchBoardByTitle);
+    public ResponseEntity<?> searchBoardByTitle(Board boardDto, Paging pagingDto) {
+        setParamPaging(boardDto, pagingDto);
+        List<Board> searchBoardByTitle = dao.searchBoardByTitle(boardDto, pagingDto);
         if(searchBoardByTitle.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body("게시물이 없습니다.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        return ResponseEntity.status(HttpStatus.OK).body(searchBoardByTitle);
     }
 
     public ResponseEntity<?> selectOneBoardByBoardSeq(Integer boardSeq) {
@@ -59,40 +50,25 @@ public class BoardService {
         return ResponseEntity.status(HttpStatus.OK).body(selectOneBoardByBoardSeq);
     }
 
-    public ResponseEntity<?> insertBoard(Board dto) {
-        dto.setCreateDate(String.valueOf(LocalDateTime.now()));
-        int insertCheck = dao.insertBoard(dto);
-        if(insertCheck != 1) {
-            return ResponseEntity.status(HttpStatus.OK).body("게시물 등록에 실패하였습니다.");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(dto);
+    public ResponseEntity<String> insertBoard(Board boardDto) {
+        dao.insertBoard(boardDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body("게시물이 등록되었습니다.");
     }
 
-    public ResponseEntity<?> deleteBoard(Integer boardSeq) {
-        Board deletedData = dao.selectOneBoardByBoardSeq(boardSeq);
-        int deleteCheck = dao.deleteBoard(boardSeq);
-        if(deleteCheck != 1) {
-            return ResponseEntity.status(HttpStatus.OK).body("존재하지 않는 게시물입니다.");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(deletedData);
+    public ResponseEntity<String> deleteBoard(Integer boardSeq) {
+        dao.deleteBoard(boardSeq);
+        return ResponseEntity.status(HttpStatus.OK).body("게시물이 삭제되었습니다.");
     }
 
-    public ResponseEntity<?> updateBoard(Board dto, Integer boardSeq) {
+    public ResponseEntity<String> updateBoard(Board boardDto, Integer boardSeq) {
         Board board = dao.selectOneBoardByBoardSeq(boardSeq);
-        if(board == null) {
-            return ResponseEntity.status(HttpStatus.OK).body("존재하지 않는 게시물입니다.");
+        if(!StringUtils.hasText(boardDto.getTitle())) {
+            boardDto.setTitle(board.getTitle());
         }
-        if(ObjectUtils.isEmpty(dto.getTitle())) {
-            dto.setTitle(board.getTitle());
+        if(!StringUtils.hasText(boardDto.getContents())) {
+            boardDto.setContents(board.getContents());
         }
-        if(ObjectUtils.isEmpty(dto.getContents())){
-            dto.setContents(board.getContents());
-        }
-        int updateCheck = dao.updateBoard(dto, boardSeq);
-        Board updatedData = dao.selectOneBoardByBoardSeq(boardSeq);
-        if(updateCheck != 1) {
-            return ResponseEntity.status(HttpStatus.OK).body("게시물 수정에 실패하였습니다.");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(updatedData);
+        dao.updateBoard(boardDto, boardSeq);
+        return ResponseEntity.status(HttpStatus.CREATED).body("게시물이 수정되었습니다.");
     }
 }

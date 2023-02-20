@@ -16,21 +16,21 @@ public class BoardController {
 
     private final BoardService service;
 
-    @GetMapping("")
-    public ResponseEntity selectBoardList(Board dto, Paging paging) { return service.selectBoardList(dto, paging); }
+    @GetMapping(value="")
+    public ResponseEntity selectBoardList(Board boardDto, Paging pagingDto) { return service.selectBoardList(boardDto, pagingDto); }
 
-    @GetMapping("/search")
-    public ResponseEntity searchBoardByTitle(Board dto, Paging paging) { return service.searchBoardByTitle(dto, paging); }
+    @GetMapping(value="/search")
+    public ResponseEntity searchBoardByTitle(Board boardDto, Paging pagingDto) { return service.searchBoardByTitle(boardDto, pagingDto); }
 
-    @GetMapping("/{boardSeq}")
-    public ResponseEntity selectOneBoardByBoardSeq(@PathVariable("boardSeq") Integer boardSeq) { return service.selectOneBoardByBoardSeq(boardSeq); }
+    @GetMapping(value="/{boardSeq}")
+    public ResponseEntity<?> selectOneBoardByBoardSeq(@PathVariable("boardSeq") Integer boardSeq) { return service.selectOneBoardByBoardSeq(boardSeq); }
 
-    @PostMapping("")
-    public ResponseEntity insertBoard(@Valid @RequestBody Board dto) { return service.insertBoard(dto); }
+    @PostMapping(value="")
+    public ResponseEntity<String> insertBoard(@Valid @RequestBody Board boardDto) { return service.insertBoard(boardDto); }
 
-    @DeleteMapping("/{boardSeq}")
-    public ResponseEntity deleteBoard(@PathVariable Integer boardSeq) { return service.deleteBoard(boardSeq); }
+    @DeleteMapping(value="/{boardSeq}")
+    public ResponseEntity<String> deleteBoard(@PathVariable("boardSeq") Integer boardSeq) { return service.deleteBoard(boardSeq); }
 
-    @PatchMapping("/{boardSeq}")
-    public ResponseEntity updateBoard(@RequestBody Board dto, @PathVariable("boardSeq") Integer boardSeq) { return service.updateBoard(dto, boardSeq); }
+    @PatchMapping(value="/{boardSeq}")
+    public ResponseEntity<String> updateBoard(@RequestBody Board boardDto, @PathVariable("boardSeq") Integer boardSeq) { return service.updateBoard(boardDto, boardSeq); }
 }

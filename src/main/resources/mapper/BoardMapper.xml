@@ -8,21 +8,21 @@
              , title
              , contents
              , createDate
-          FROM board
-         LIMIT #{boardNumToShow}
+        FROM board
+                 LIMIT #{boardNumToShow}
         OFFSET #{startRowNumToShow}
     </select>
 
     <select id="searchBoardByTitle" resultType="Board" parameterType="Board">
         SELECT boardSeq
-             , writer
-             , title
-             , contents
-             , createDate
-          FROM board
-         WHERE title  LIKE CONCAT ('%', #{dto.title}, '%')
-               <if test="paging.totalRows != null">LIMIT #{paging.boardNumToShow}</if>
-               <if test="paging.totalRows != null">OFFSET #{paging.startRowNumToShow}</if>
+        , writer
+        , title
+        , contents
+        , createDate
+        FROM board
+        WHERE title  LIKE CONCAT ('%', #{boardDto.title}, '%')
+        <if test="pagingDto.totalRows != null">LIMIT #{pagingDto.boardNumToShow}</if>
+        <if test="pagingDto.totalRows != null">OFFSET #{pagingDto.startRowNumToShow}</if>
     </select>
 
     <select id="selectOneBoardByBoardSeq" resultType="Board" parameterType="Integer">
@@ -31,41 +31,37 @@
              , title
              , contents
              , createDate
-          FROM board
-         WHERE boardSeq = #{boardSeq}
+        FROM board
+        WHERE boardSeq = #{boardSeq}
     </select>
 
     <insert id="insertBoard" parameterType="Board">
         INSERT INTO board ( writer
                           , title
                           , contents
-                          )
-                   VALUES ( #{writer}
-                          , #{title}
-                          , #{contents}
-                          )
-        <selectKey keyProperty="boardSeq" resultType="Integer" order="AFTER">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
+        )
+        VALUES ( #{writer}
+               , #{title}
+               , #{contents}
+               )
     </insert>
 
     <delete id="deleteBoard" parameterType="Integer">
         DELETE
-          FROM board
-         WHERE boardSeq = #{boardSeq}
+        FROM board
+        WHERE boardSeq = #{boardSeq}
     </delete>
 
     <update id="updateBoard" parameterType="Board">
         UPDATE board
-           SET title = #{dto.title}
-             , contents = #{dto.contents}
-         WHERE boardSeq = #{boardSeq}
+        SET title = #{boardDto.title}
+          , contents = #{boardDto.contents}
+        WHERE boardSeq = #{boardSeq}
     </update>
 
     <select id="boardCount" resultType="Integer" parameterType="Board">
         SELECT COUNT(*)
-          FROM board
-         WHERE 1=1
-               <if test="title != null">AND title  LIKE CONCAT ('%', #{title}, '%')</if>
+        FROM board
+        <if test="title != null">WHERE title  LIKE CONCAT ('%', #{title}, '%')</if>
     </select>
 </mapper>

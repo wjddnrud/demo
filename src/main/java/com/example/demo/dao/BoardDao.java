@@ -8,17 +8,17 @@ import java.util.List;
 @Mapper
 public interface BoardDao {
 
-    List<Board> selectBoardList(Paging paging);
+    List<Board> selectBoardList(Paging pagingDto);
 
-    List<Board> searchBoardByTitle(Board dto, Paging paging);
+    List<Board> searchBoardByTitle(Board boardDto, Paging pagingDto);
 
     Board selectOneBoardByBoardSeq(Integer boardSeq);
 
-    int insertBoard(Board dto);
+    void insertBoard(Board boardDto);
 
-    int deleteBoard(Integer boardSeq);
+    void deleteBoard(Integer boardSeq);
 
-    int updateBoard(Board dto, Integer boardSeq);
+    void updateBoard(Board boardDto, Integer boardSeq);
 
-    int boardCount(Board dto);
+    int boardCount(Board boardDto);
 }
